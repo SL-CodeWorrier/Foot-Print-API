@@ -18,7 +18,7 @@ const upload = multer({
 });
 
 // POST /tweets - Create a new tweet
-router.post('/tweets', auth, upload.single('image'), async (req, res) => {
+router.post('/tweets', upload.single('image'), async (req, res) => {
   try {
     const tweet = new Tweet({
       text: req.body.text,
