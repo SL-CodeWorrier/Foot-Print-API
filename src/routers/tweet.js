@@ -23,7 +23,6 @@ router.post('/tweets', upload.single('image'), async (req, res) => {
     const tweet = new Tweet({
       text: req.body.text,
       user: req.user.name,
-      name: undefined,
       username: req.user.username,
       userId: req.user._id,
       image: req.file ? req.file.buffer : undefined
