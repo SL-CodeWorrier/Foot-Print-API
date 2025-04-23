@@ -42,17 +42,22 @@ router.get('/users', async (req, res) => {
     }
   });
 
-  // POST /users/login - login a user
-router.post('/users/login', async (req, res) => {
+  router.post('/users/login', async (req, res) => {
     try {
+      console.log("📥 Incoming login body:", req.body);
+  
       const { email, password } = req.body;
   
+      if (!email || !password) {
+        return res.status(400).send({ error: "Email or password missing!" });
+      }
+  
       const user = await User.findByCredentials(email, password);
-
       const token = await user.generateAuthToken();
   
       res.status(200).send({ message: 'Login successful', user, token });
     } catch (error) {
+      console.error("❌ Login error:", error);
       res.status(400).send({ error: error.message || 'Unable to login!' });
     }
   });
