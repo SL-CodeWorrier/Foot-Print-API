@@ -18,8 +18,8 @@ const upload = multer({
 
 // POST /user - create a new user
 router.post('/user', async (req, res) => {
+  const user = new User(req.body);
     try {
-      const user = new User(req.body);
       await user.save();
       res.status(201).send({ message: 'User created successfully', user });
     } catch (error) {
