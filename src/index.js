@@ -1,26 +1,25 @@
 const express = require('express');
-const app = express();
+const connectDB = require('./db/mongoose'); // 👈 Import your DB connection function
 
 const userRouter = require('./routers/user');
 const tweetRouter = require('./routers/tweet');
 const notificationRouter = require('./routers/notification');
 
-// Middleware to parse JSON
+const app = express();
 app.use(express.json());
 
 app.use(userRouter);
 app.use(tweetRouter);
 app.use(notificationRouter);
 
-// Define a test route
 app.get('/', (req, res) => {
-  res.send('Hello from Twitter Backend API!');
+  res.send('Hello from Foot-Print Backend API!');
 });
 
-// Set port from environment variable or use 3000
-const PORT = process.env.PORT || 3000;
-
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Connect to MongoDB first, then start server
+connectDB().then(() => {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server is running on port ${PORT}`);
+  });
 });
