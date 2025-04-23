@@ -111,16 +111,18 @@ userSchema.statics.findByCredentials = async function (email, password) {
   return user;
 };
 
-// Inside userSchema.methods
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
+
   const token = jwt.sign(
     { _id: user._id.toString() },
     'twittercourse', // Use a secure secret key
     { expiresIn: '7d' } // Token expires in 7 days
   );
 
-  user.tokens = user.tokens.concat({ token });
+  // Ensure user.tokens is initialized
+  user.tokens = user.tokens ? user.tokens.concat({ token }) : [{ token }];
+
   await user.save(); // Save the token to the database
 
   return token;
