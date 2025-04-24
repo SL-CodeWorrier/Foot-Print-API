@@ -8,12 +8,6 @@ const auth = require('../middleware/auth');
 const upload = multer({ 
   limits: {
     fileSize: 5 * 5 * 1024 * 1024
-  },
-  fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error('Only image files (jpg, jpeg, png) are allowed!'));
-    }
-    cb(null, true);
   }
 });
 
