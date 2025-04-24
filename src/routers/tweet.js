@@ -29,26 +29,36 @@ router.post('/tweets', auth, upload.single('image'), async (req, res) => {
   }
 });
 
-// POST /uploadTweetImage/:id - Upload or update tweet image
-router.post('/uploadTweetImage/:id', auth, upload.single('image'), async (req, res) => {
-    try {
-      const tweet = await Tweet.findById(req.params.id);
-  
-      if (!tweet) {
-        return res.status(404).send({ error: 'Tweet not found' });
-      }
-  
-      const buffer = await sharp(req.file.buffer).resize({ width: 600 }).png().toBuffer();
-      tweet.image = buffer;
-      await tweet.save();
-  
-      res.status(200).send({ message: 'Tweet image uploaded successfully' });
-    } catch (error) {
-      res.status(400).send({ error: error.message });
-    }
-  }, (error, req, res, next) => {
-    res.status(400).send({ error: error.message });
-  });
+const fs = require('fs');
+
+router.post('/uploadTweetImage/:id', upload.single('image'), async (req, res) => {
+  try {
+    const tweetId = req.params.id;
+
+    // Read the image file into a Buffer
+    const imageBuffer = fs.readFileSync(req.file.path);
+
+    // Optional: Convert to base64 string
+    const imageBase64 = imageBuffer.toString('base64');
+
+    // Update the tweet document
+    const updatedTweet = await Tweet.findByIdAndUpdate(tweetId, {
+      image: imageBase64, // you can also use imageBuffer directly for binary
+    }, { new: true });
+
+    // Remove file from temp storage if needed
+    fs.unlinkSync(req.file.path);
+
+    res.status(200).json({
+      message: 'Image uploaded and saved in MongoDB',
+      tweet: updatedTweet
+    });
+
+  } catch (error) {
+    console.error('❌ Error saving image:', error);
+    res.status(500).json({ error: 'Image upload failed' });
+  }
+});
 
 // GET /tweets - Fetch all tweets
 router.get('/tweets', auth, async (req, res) => {
