@@ -29,8 +29,13 @@ router.post('/tweets', auth, upload.single('image'), async (req, res) => {
   }
 });
 
+// POST /uploadTweetImage/:id
 router.post('/uploadTweetImage/:id', auth, upload.single('image'), async (req, res) => {
   try {
+    console.log("🔄 Route hit: /uploadTweetImage/:id");
+    console.log("📥 Tweet ID:", req.params.id);
+    console.log("📦 File received:", req.file);
+
     const tweet = await Tweet.findById(req.params.id);
 
     if (!tweet) {
@@ -43,16 +48,22 @@ router.post('/uploadTweetImage/:id', auth, upload.single('image'), async (req, r
       return res.status(400).send({ error: 'No image file uploaded' });
     }
 
-    const buffer = await sharp(req.file.buffer).resize({ width: 600 }).png().toBuffer();
+    // Resize image
+    const buffer = await sharp(req.file.buffer)
+      .resize({ width: 600 })
+      .png()
+      .toBuffer();
 
+    // Save image buffer
     tweet.image = buffer;
     await tweet.save();
 
+    console.log("✅ Image uploaded and tweet updated");
     res.status(200).send({ message: 'Tweet image uploaded successfully' });
 
   } catch (error) {
-    console.error("❌ Upload image failed:", error);
-    res.status(500).send({ error: 'Image upload failed' });
+    console.error("❌ Upload image failed:", error.message);
+    res.status(500).send({ error: error.message });
   }
 });
 
