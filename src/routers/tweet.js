@@ -5,9 +5,9 @@ const Tweet = require('../models/tweet');
 const auth = require('../middleware/auth');
 
 // Multer setup for image upload (optional)
-const upload = multer({
+const upload = multer({ 
   limits: {
-    fileSize: 5 * 1024 * 1024 // limit image to 5MB
+    fileSize: 5 * 5 * 1024 * 1024
   },
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
