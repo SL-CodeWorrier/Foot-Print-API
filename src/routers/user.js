@@ -190,7 +190,7 @@ router.put('/user/:id/unfollow', auth, async (req, res) => {
   });
 
  // PATCH /user/me - Update current authenticated user's attributes (excluding username)
-router.patch('/user/me', auth, async (req, res) => {
+router.patch('/user/:id', auth, async (req, res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = ['name', 'email', 'password', 'bio', 'website', 'location', 'avatarExists'];
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
