@@ -62,22 +62,32 @@ router.get('/users', async (req, res) => {
     }
   });
 
-  // GET /user/:id - fetch a single user by ID
+// GET /user/:id - fetch a single user by ID
 router.get('/user/:id', async (req, res) => {
-    const userId = req.params.id;
-  
-    try {
+  const userId = req.params.id;
+
+  try {
+      // Attempt to find the user by ID in the database
       const user = await User.findById(userId);
-  
+
+      // If the user does not exist, return a 404
       if (!user) {
-        return res.status(404).send({ message: 'User not found' });
+          return res.status(404).send({ error: 'User not found' });
       }
-  
+
+      // If the user is found, send the user data with a 200 status
       res.status(200).send(user);
-    } catch (error) {
-      res.status(500).send({ error: 'Failed to fetch user', details: error.message });
-    }
-  });
+  } catch (error) {
+      // Log the error on the server for debugging
+      console.error('Error fetching user:', error);
+
+      // Send a 500 status if there's an internal server error
+      res.status(500).send({
+          error: 'Failed to fetch user',
+          details: error.message || 'Unknown error'
+      });
+  }
+});
 
   // POST /user/:id/avatar - Upload profile picture
 router.post('/user/:id/avatar', auth, upload.single('avatar'), async (req, res) => {
