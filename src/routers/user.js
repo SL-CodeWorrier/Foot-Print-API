@@ -68,7 +68,7 @@ router.get('/user/:id', async (req, res) => {
 
   try {
       // Attempt to find the user by ID in the database
-      const user = await User.findById(userId);
+      const user = await User.findOne({ _id: userId });
 
       // If the user does not exist, return a 404
       if (!user) {
